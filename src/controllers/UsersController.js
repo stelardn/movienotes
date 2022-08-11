@@ -1,14 +1,23 @@
+const { request } = require("express");
 const AppError = require("../utils/AppError");
+const knex = require("../database/knex");
 class UsersController {
 
-  async create(req, res) {
-    const { id, name } = req.body;
+  async create(request, response) {
+    const { name, email, password } = request.body;
 
-    if (!name) {
-      throw new AppError('O nome deve ser informado.')
+    if (!name || !email || !password) {
+      throw new AppError('Informe nome, email e senha')
     }
 
-    return res.status(201).json({ id, name });
+    const user_id = await knex("users")
+      .insert({
+        name: name,
+        email: email,
+        password: password
+      })
+
+    return response.status(201).json({ name, email });
   }
 }
 
