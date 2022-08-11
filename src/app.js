@@ -4,6 +4,10 @@ const express = require("express");
 
 const app = express();
 
+const sqliteConnection = require("./database/sqlite");
+
+sqliteConnection();
+
 const routes = require("./routes");
 
 app.use(express.json());
