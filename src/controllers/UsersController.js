@@ -29,6 +29,37 @@ class UsersController {
 
     return response.status(201).json({ name, email });
   }
+
+  async show(request, response) {
+    const { id } = request.params;
+
+    const user = await knex("users")
+      .select(["id", "name", "email", "avatar"])
+      .where("id", id);
+
+    return response.json(user);
+  }
+
+  async index(request, response) {
+    const users = await knex("users")
+      .select([
+        "id",
+        "name",
+        "email",
+        "avatar"
+      ])
+
+    return response.json(users);
+  } // adicionar buscas
+
+  async delete(request, response) {
+    const { id } = request.params;
+
+    await knex("users").delete().where("id", id);
+
+    return response.json();
+  }
+
 }
 
 module.exports = UsersController;

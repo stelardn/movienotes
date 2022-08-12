@@ -4,9 +4,9 @@ const express = require("express");
 
 const app = express();
 
-const sqliteConnection = require("./database/sqlite");
+// const sqliteConnection = require("./database/sqlite");
 
-sqliteConnection();
+// sqliteConnection();
 
 const routes = require("./routes");
 

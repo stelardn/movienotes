@@ -5,9 +5,10 @@ const userRouter = Router();
 const UsersController = require("../controllers/UsersController");
 const usersController = new UsersController;
 
-userRouter.get('/', (req, res) => {
-  res.send("Hello, user!")
-})
+
 userRouter.post('/', usersController.create);
+userRouter.get('/:id', usersController.show);
+userRouter.get('/', usersController.index);
+userRouter.delete('/:id', usersController.delete);
 
 module.exports = userRouter;
