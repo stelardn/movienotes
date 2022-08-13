@@ -1,7 +1,7 @@
 const { request } = require("express");
 const AppError = require("../utils/AppError");
 const knex = require("../database/knex");
-const { hash } = require("bcrypt");
+const { hash, compare } = require("bcrypt");
 class UsersController {
 
   async create(request, response) {
@@ -58,6 +58,55 @@ class UsersController {
     await knex("users").delete().where("id", id);
 
     return response.json();
+  }
+
+  async update(request, response) {
+    const { id } = request.params;
+    const { name, email, password, old_password, avatar } = request.body;
+
+    const user = await knex("users").select().where({ id }).first();
+
+    if (!user) {
+      throw new AppError('Usuário não encontrado! Verifique o ID.')
+    }
+
+    if (password && !old_password) {
+      throw new AppError('A senha antiga deve ser informada!');
+    }
+
+    if (password && old_password) {
+      const correctOldPassword = await compare(old_password, user.password);
+
+      if (!correctOldPassword) {
+        throw new AppError('A senha antiga informada não confere.')
+      }
+
+      user.password = await hash(password, 8);
+    }
+
+    if (email) {
+      const userWithThisEmail = await knex("users").select("id").where({ email }).first();
+
+      if (userWithThisEmail && userWithThisEmail.id !== user.id) {
+        throw new AppError('Este e-mail já está em uso.');
+      }
+    }
+
+    user.name = name ?? user.name;
+    user.email = email ?? user.email;
+    user.avatar = avatar ?? user.avatar;
+
+    await knex("users")
+      .where({ id })
+      .update({
+        name: user.name,
+        email: user.email,
+        password: user.password,
+        avatar: user.avatar,
+        updated_at: knex.fn.now()
+      })
+
+    return response.json({ user });
   }
 
 }
