@@ -1,4 +1,4 @@
-const { request } = require("express");
+const { request, query } = require("express");
 const AppError = require("../utils/AppError");
 const knex = require("../database/knex");
 const { hash, compare } = require("bcrypt");
@@ -41,16 +41,32 @@ class UsersController {
   }
 
   async index(request, response) {
-    const users = await knex("users")
-      .select([
-        "id",
-        "name",
-        "email",
-        "avatar"
-      ])
 
+    const { name } = request.query;
+
+    let users;
+
+    if (name) {
+      users = await knex("users")
+        .select([
+          "id",
+          "name",
+          "email",
+          "avatar"
+        ])
+        .whereLike("name", `%${name}%`)
+        .orderBy("name");
+    } else {
+      users = await knex("users")
+        .select([
+          "id",
+          "name",
+          "email",
+          "avatar"
+        ])
+    }
     return response.json(users);
-  } // adicionar buscas
+  }
 
   async delete(request, response) {
     const { id } = request.params;
@@ -106,7 +122,7 @@ class UsersController {
         updated_at: knex.fn.now()
       })
 
-    return response.json({ user });
+    return response.json({ user: { name, email, avatar } });
   }
 
 }
