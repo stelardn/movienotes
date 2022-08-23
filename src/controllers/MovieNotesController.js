@@ -1,5 +1,5 @@
 const knex = require("../database/knex");
-const { request, query } = require("express");
+const { request, query, application } = require("express");
 const AppError = require("../utils/AppError");
 
 
@@ -124,6 +124,49 @@ class MovieNotesController {
     })
   }
 
+  // Updates information on a specific movie note based on its id number
+  // For tags update, previous tags are deleted and new tags are created referencing the note id
+  async update(request, response) {
+    const { id } = request.params;
+    const { title, description, rating, tags } = request.body;
+
+    const note = await knex("movie_notes").where({ id }).first();
+
+    if (!note) {
+      throw new AppError("Nota não encontrada.");
+    }
+
+    if (!Number.isInteger(rating)) {
+      throw new AppError("A avaliação deve ser um número inteiro de 1 a 5");
+    }
+
+    note.title = title ?? note.title;
+    note.description = description ?? note.description;
+    note.rating = rating ?? note.rating;
+
+    await knex("movie_notes")
+      .where({ id })
+      .update({
+        title: note.title,
+        description: note.description,
+        rating: note.rating
+      })
+
+    if (tags) {
+      await knex("movie_tags").delete().where({ note_id: id });
+
+      const newTags = tags.map(tag => {
+        return {
+          note_id: note.id,
+          user_id: note.user_id,
+          name: tag
+        }
+      });
+
+      await knex("movie_tags").insert(newTags);
+    }
+    return response.json();
+  }
 }
 
 module.exports = MovieNotesController;
