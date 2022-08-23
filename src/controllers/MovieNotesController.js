@@ -149,7 +149,8 @@ class MovieNotesController {
       .update({
         title: note.title,
         description: note.description,
-        rating: note.rating
+        rating: note.rating,
+        updated_at: knex.fn.now()
       })
 
     if (tags) {
