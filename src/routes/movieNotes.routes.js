@@ -6,7 +6,8 @@ const movieNotesController = new MovieNotesController;
 
 
 movieNotesRouter.post("/", movieNotesController.create);
-movieNotesRouter.get("/:user_id", movieNotesController.index);
+movieNotesRouter.get("/", movieNotesController.index);
+movieNotesRouter.get("/:id", movieNotesController.show);
 movieNotesRouter.delete("/:id", movieNotesController.delete);
 
 module.exports = movieNotesRouter;
