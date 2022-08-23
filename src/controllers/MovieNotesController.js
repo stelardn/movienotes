@@ -1,5 +1,5 @@
 const knex = require("../database/knex");
-const { request, query, application } = require("express");
+const { request } = require("express");
 const AppError = require("../utils/AppError");
 
 
