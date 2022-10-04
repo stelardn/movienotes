@@ -31,11 +31,11 @@ class UsersController {
   }
 
   async show(request, response) {
-    const { id } = request.params;
+    const user_id = request.user.id;
 
     const user = await knex("users")
       .select(["id", "name", "email", "avatar"])
-      .where("id", id);
+      .where("id", user_id);
 
     return response.json(user);
   }
