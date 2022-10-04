@@ -69,7 +69,7 @@ class UsersController {
   }
 
   async delete(request, response) {
-    const { id } = request.params;
+    const id = request.user.id;
 
     await knex("users").delete().where("id", id);
 
