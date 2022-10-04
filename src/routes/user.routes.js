@@ -11,6 +11,6 @@ userRouter.post('/', usersController.create);
 userRouter.get('/', ensureAuthenticated, usersController.show);
 userRouter.get('/', usersController.index);
 userRouter.delete('/:id', usersController.delete);
-userRouter.put('/:id', usersController.update);
+userRouter.put('/', ensureAuthenticated, usersController.update);
 
 module.exports = userRouter;
