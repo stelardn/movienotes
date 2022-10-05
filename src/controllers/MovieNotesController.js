@@ -8,7 +8,7 @@ class MovieNotesController {
   // Creates a movie with a title, a rating and a description
   async create(request, response) {
     const { title, description, rating, tags } = request.body;
-    const { user_id } = request.query;
+    const user_id = request.user.id;
 
     if (!title) {
       throw new AppError("O título do filme deve ser informado.");
@@ -65,7 +65,8 @@ class MovieNotesController {
 
   // Returns a list of all the movie notes from a single user, which can be filtered
   async index(request, response) {
-    const { title, tags, user_id } = request.query;
+    const { title, tags } = request.query;
+    const user_id = request.user.id;
 
     let movieNotes;
 
@@ -129,11 +130,16 @@ class MovieNotesController {
   async update(request, response) {
     const { id } = request.params;
     const { title, description, rating, tags } = request.body;
+    const user_id = request.user.id;
 
     const note = await knex("movie_notes").where({ id }).first();
 
     if (!note) {
       throw new AppError("Nota não encontrada.");
+    }
+
+    if (user_id !== note.user_id) {
+      throw new AppError("Somente o usuário criador da nota pode fazer alterações.")
     }
 
     if (!Number.isInteger(rating)) {
