@@ -42,6 +42,8 @@ class UsersController {
 
   async index(request, response) {
 
+    const user_id = request.user.id;
+
     const { name } = request.query;
 
     let users;
