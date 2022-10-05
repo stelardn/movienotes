@@ -4,6 +4,10 @@ const movieNotesRouter = Router();
 const MovieNotesController = require("../controllers/MovieNotesController");
 const movieNotesController = new MovieNotesController;
 
+const ensureAuthenticated = require("../middlewares/ensureAuthenticated");
+
+movieNotesRouter.use(ensureAuthenticated);
+
 
 movieNotesRouter.post("/", movieNotesController.create);
 movieNotesRouter.get("/", movieNotesController.index);

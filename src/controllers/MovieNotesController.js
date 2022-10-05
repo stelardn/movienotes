@@ -55,6 +55,13 @@ class MovieNotesController {
   // Deletes a movie note receiving its id number
   async delete(request, response) {
     const { id } = request.params;
+    const user_id = request.user.id;
+
+    const note = await knex("movie_notes").select().where({ id }).first();
+
+    if (user_id !== note.user_id) {
+      throw new AppError("Somente o usuário criador da nota pode removê-la.");
+    }
 
     await knex("movie_notes")
       .delete()
