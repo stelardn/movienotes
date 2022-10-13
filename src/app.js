@@ -4,6 +4,9 @@ const express = require("express");
 const app = express();
 app.use(express.json());
 
+const cors = require('cors');
+app.use(cors());
+
 const { UPLOADS_FOLDER } = require("./configs/upload");
 app.use('/files', express.static(UPLOADS_FOLDER));
 
